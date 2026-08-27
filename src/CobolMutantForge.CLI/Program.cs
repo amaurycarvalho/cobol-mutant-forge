@@ -7,9 +7,10 @@ internal static class Program
 {
     private static async Task<int> Main(string[] args)
     {
-        var quietOption = new Option<bool>(
-            "--quiet",
-            "Suppress informational output; only errors are shown.");
+        var quietOption = new Option<bool>("--quiet")
+        {
+            Description = "Suppress informational output; only errors are shown."
+        };
 
         var rootCommand = new RootCommand("CobolMutantForge - COBOL mutation testing tool")
         {
