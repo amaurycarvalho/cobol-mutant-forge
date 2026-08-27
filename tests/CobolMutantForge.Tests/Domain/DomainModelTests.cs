@@ -36,6 +36,44 @@ public class MutationProfileTests
     }
 
     [Fact]
+    public void FromName_ThrowsOnNull()
+    {
+        Assert.Throws<ArgumentNullException>(() => MutationProfile.FromName(null!));
+    }
+
+    [Fact]
+    public void FromName_TrimsWhitespaceAroundName()
+    {
+        Assert.Equal(MutationProfile.High, MutationProfile.FromName("  high  "));
+    }
+
+    [Fact]
+    public void FromName_ErrorMessageMentionsValidProfiles()
+    {
+        var exception = Assert.Throws<ArgumentException>(() => MutationProfile.FromName("extreme"));
+
+        Assert.Contains("low, medium, high", exception.Message);
+    }
+
+    [Fact]
+    public void LowProfile_HasExpectedName()
+    {
+        Assert.Equal("low", MutationProfile.Low.Name);
+    }
+
+    [Fact]
+    public void MediumProfile_HasExpectedName()
+    {
+        Assert.Equal("medium", MutationProfile.Medium.Name);
+    }
+
+    [Fact]
+    public void HighProfile_HasExpectedName()
+    {
+        Assert.Equal("high", MutationProfile.High.Name);
+    }
+
+    [Fact]
     public void MediumProfile_MatchesPdrMatrix()
     {
         Assert.True(MutationProfile.Medium.LogicalOperators);
@@ -106,8 +144,68 @@ public class MutationTests
     [Fact]
     public void Mutation_ThrowsOnNonPositiveLine()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Mutation(
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new Mutation(
             "mut-1", MutationType.AndToOr, line: 0, "orig", "mut"));
+
+        Assert.Contains("The mutation line must be a positive line number.", exception.Message);
+    }
+
+    [Fact]
+    public void Mutation_ThrowsOnNullOriginal()
+    {
+        Assert.Throws<ArgumentNullException>(() => new Mutation(
+            "mut-1", MutationType.AndToOr, 1, null!, "mut"));
+    }
+
+    [Fact]
+    public void Mutation_ThrowsOnNullMutated()
+    {
+        Assert.Throws<ArgumentNullException>(() => new Mutation(
+            "mut-1", MutationType.AndToOr, 1, "orig", null!));
+    }
+
+    [Fact]
+    public void Mutation_DefaultsCoveringTestIdsToEmpty()
+    {
+        var mutation = new Mutation("mut-1", MutationType.AndToOr, 1, "orig", "mut");
+
+        Assert.Empty(mutation.CoveringTestIds);
+    }
+
+    [Fact]
+    public void Mutation_EqualityComparesOnlyId()
+    {
+        var a = new Mutation("mut-1", MutationType.AndToOr, 1, "A AND B", "A OR B");
+        var b = new Mutation("mut-1", MutationType.OrToAnd, 99, "different", "text");
+
+        Assert.Equal(a, b);
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+    }
+
+    [Fact]
+    public void Mutation_WithDifferentId_AreNotEqual()
+    {
+        var a = new Mutation("mut-1", MutationType.AndToOr, 1, "A AND B", "A OR B");
+        var b = new Mutation("mut-2", MutationType.AndToOr, 1, "A AND B", "A OR B");
+
+        Assert.NotEqual(a, b);
+    }
+
+    [Fact]
+    public void Mutation_EqualsNull_IsFalse()
+    {
+        var mutation = new Mutation("mut-1", MutationType.AndToOr, 1, "orig", "mut");
+
+        Assert.False(mutation.Equals(null));
+        Assert.False(mutation.Equals((object?)null));
+    }
+
+    [Fact]
+    public void Mutation_EqualsNonMutation_IsFalse()
+    {
+        var mutation = new Mutation("mut-1", MutationType.AndToOr, 1, "orig", "mut");
+
+        Assert.False(mutation.Equals("mut-1"));
     }
 }
 
@@ -133,6 +231,62 @@ public class CobolProgramTests
 
         Assert.NotEqual(a, b);
     }
+
+    [Fact]
+    public void ProgramsWithDifferentName_AreNotEqual()
+    {
+        var a = new CobolProgram("HELLO", "PROGRAM-ID. HELLO.");
+        var b = new CobolProgram("WORLD", "PROGRAM-ID. HELLO.");
+
+        Assert.NotEqual(a, b);
+    }
+
+    [Fact]
+    public void Program_EqualsNull_IsFalse()
+    {
+        var program = new CobolProgram("HELLO", "PROGRAM-ID. HELLO.");
+
+        Assert.False(program.Equals(null));
+    }
+
+    [Fact]
+    public void Program_ThrowsOnBlankName()
+    {
+        Assert.Throws<ArgumentException>(() => new CobolProgram(" ", "PROGRAM-ID. HELLO."));
+    }
+
+    [Fact]
+    public void Program_ThrowsOnNullSourceText()
+    {
+        Assert.Throws<ArgumentNullException>(() => new CobolProgram("HELLO", null!));
+    }
+
+    [Fact]
+    public void Program_DefaultsCopybooksToEmpty()
+    {
+        var program = new CobolProgram("HELLO", "PROGRAM-ID. HELLO.");
+
+        Assert.Empty(program.Copybooks);
+    }
+
+    [Fact]
+    public void Program_ComputesDeterministicSourceHash()
+    {
+        var a = new CobolProgram("HELLO", "PROGRAM-ID. HELLO.");
+        var b = new CobolProgram("HELLO", "PROGRAM-ID. HELLO.");
+
+        Assert.Equal(a.SourceHash, b.SourceHash);
+        Assert.NotEmpty(a.SourceHash);
+    }
+
+    [Fact]
+    public void Program_DifferentSource_ProducesDifferentHash()
+    {
+        var a = new CobolProgram("HELLO", "PROGRAM-ID. HELLO.");
+        var b = new CobolProgram("HELLO", "PROGRAM-ID. WORLD.");
+
+        Assert.NotEqual(a.SourceHash, b.SourceHash);
+    }
 }
 
 public class MutantPackageTests
@@ -146,6 +300,41 @@ public class MutantPackageTests
 
         Assert.Equal(2, package.Count);
         Assert.Equal(2, package.Mutants.Count);
+    }
+
+    [Fact]
+    public void AddMutant_ThrowsOnNull()
+    {
+        var package = new MutantPackage("pkg-1");
+
+        Assert.Throws<ArgumentNullException>(() => package.AddMutant(null!));
+    }
+
+    [Fact]
+    public void MutantPackage_EqualityComparesOnlyId()
+    {
+        var a = new MutantPackage("pkg-1");
+        var b = new MutantPackage("pkg-1");
+
+        Assert.Equal(a, b);
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+    }
+
+    [Fact]
+    public void MutantPackage_WithDifferentId_AreNotEqual()
+    {
+        var a = new MutantPackage("pkg-1");
+        var b = new MutantPackage("pkg-2");
+
+        Assert.NotEqual(a, b);
+    }
+
+    [Fact]
+    public void MutantPackage_EqualsNull_IsFalse()
+    {
+        var package = new MutantPackage("pkg-1");
+
+        Assert.False(package.Equals(null));
     }
 }
 
@@ -167,6 +356,54 @@ public class MutationProjectTests
         Assert.Equal(MutationProfile.Medium, project.Profile);
         Assert.Single(project.Programs);
         Assert.Single(project.TestCases);
+    }
+
+    [Fact]
+    public void Project_DefaultsPathsToEmptyAndProfileToMedium()
+    {
+        var project = new MutationProject("sample");
+
+        Assert.Empty(project.Paths);
+        Assert.Equal(MutationProfile.Medium, project.Profile);
+    }
+
+    [Fact]
+    public void Project_ThrowsOnBlankName()
+    {
+        Assert.Throws<ArgumentException>(() => new MutationProject(" "));
+    }
+
+    [Fact]
+    public void Project_AddProgram_ThrowsOnNull()
+    {
+        var project = new MutationProject("sample");
+
+        Assert.Throws<ArgumentNullException>(() => project.AddProgram(null!));
+    }
+
+    [Fact]
+    public void Project_AddTestCase_ThrowsOnNull()
+    {
+        var project = new MutationProject("sample");
+
+        Assert.Throws<ArgumentNullException>(() => project.AddTestCase(null!));
+    }
+
+    [Fact]
+    public void Project_StartsWithNoProgramsOrTestCases()
+    {
+        var project = new MutationProject("sample");
+
+        Assert.Empty(project.Programs);
+        Assert.Empty(project.TestCases);
+    }
+
+    [Fact]
+    public void Project_ExplicitProfile_IsUsed()
+    {
+        var project = new MutationProject("sample", profile: MutationProfile.High);
+
+        Assert.Equal(MutationProfile.High, project.Profile);
     }
 }
 
@@ -214,6 +451,48 @@ public class TestCaseDataTests
         Assert.Equal("1", testCase.Inputs["A"]);
         Assert.Equal("2", testCase.ExpectedOutputs["B"]);
     }
+
+    [Fact]
+    public void TestCase_DefaultsInputsAndExpectedOutputsToEmpty()
+    {
+        var testCase = new TestCase("tc-1");
+
+        Assert.Empty(testCase.Inputs);
+        Assert.Empty(testCase.ExpectedOutputs);
+    }
+
+    [Fact]
+    public void TestCase_ThrowsOnBlankId()
+    {
+        Assert.Throws<ArgumentException>(() => new TestCase(" "));
+    }
+
+    [Fact]
+    public void TestCase_EqualityComparesOnlyId()
+    {
+        var a = new TestCase("tc-1", new Dictionary<string, string> { ["A"] = "1" });
+        var b = new TestCase("tc-1", new Dictionary<string, string> { ["B"] = "2" });
+
+        Assert.Equal(a, b);
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+    }
+
+    [Fact]
+    public void TestCase_WithDifferentId_AreNotEqual()
+    {
+        var a = new TestCase("tc-1");
+        var b = new TestCase("tc-2");
+
+        Assert.NotEqual(a, b);
+    }
+
+    [Fact]
+    public void TestCase_EqualsNull_IsFalse()
+    {
+        var testCase = new TestCase("tc-1");
+
+        Assert.False(testCase.Equals(null));
+    }
 }
 
 public class MutantPackageDetailsTests
@@ -238,6 +517,26 @@ public class MutantPackageDetailsTests
     {
         Assert.Throws<ArgumentException>(() => new MutantPackage(" "));
     }
+
+    [Fact]
+    public void MutantPackage_DefaultsToMediumProfile()
+    {
+        var package = new MutantPackage("pkg-1");
+
+        Assert.Equal(MutationProfile.Medium, package.Profile);
+    }
+
+    [Fact]
+    public void MutantPackage_StartsWithNoMutants()
+    {
+        var package = new MutantPackage("pkg-1");
+
+        Assert.Equal(0, package.Count);
+        Assert.Empty(package.Mutants);
+        Assert.Null(package.SourceProgram);
+        Assert.Null(package.Manifest);
+        Assert.Null(package.Report);
+    }
 }
 
 public class MutationDetailsTests
@@ -256,6 +555,15 @@ public class MutationDetailsTests
     {
         Assert.Throws<ArgumentException>(() => new Mutation("", MutationType.AndToOr, 1, "a", "b"));
     }
+
+    [Fact]
+    public void Mutation_GetHashCode_IsStableAcrossEquivalentInstances()
+    {
+        var a = new Mutation("m1", MutationType.AndToOr, 1, "a", "b");
+        var b = new Mutation("m1", MutationType.OrToAnd, 2, "c", "d");
+
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+    }
 }
 
 public class CobolProgramDetailsTests
@@ -268,5 +576,113 @@ public class CobolProgramDetailsTests
 
         Assert.Equal(2, program.Copybooks.Count);
         Assert.Same(ast, program.Ast);
+    }
+
+    [Fact]
+    public void CobolProgram_WithNullAst_ExposesNullAst()
+    {
+        var program = new CobolProgram("HELLO", "PROGRAM-ID. HELLO.");
+
+        Assert.Null(program.Ast);
+    }
+}
+
+public class AstNodeTests
+{
+    [Fact]
+    public void AstNode_DefaultsAreEmpty()
+    {
+        var node = new AstNode();
+
+        Assert.Equal(string.Empty, node.Kind);
+        Assert.Equal(string.Empty, node.Text);
+        Assert.Equal(0, node.Line);
+        Assert.Equal(0, node.Column);
+        Assert.Empty(node.Children);
+    }
+
+    [Fact]
+    public void AstNode_ExposesPopulatedValues()
+    {
+        var child = new AstNode { Kind = "ArithmeticOperator", Text = "+", Line = 4, Column = 30 };
+        var node = new AstNode
+        {
+            Kind = "Program",
+            Text = "SAMPLE",
+            Line = 1,
+            Column = 1,
+            Children = new[] { child }
+        };
+
+        Assert.Equal("Program", node.Kind);
+        Assert.Equal("SAMPLE", node.Text);
+        Assert.Equal(1, node.Line);
+        Assert.Equal(1, node.Column);
+        var descendant = Assert.Single(node.Children);
+        Assert.Equal("+", descendant.Text);
+    }
+
+    [Fact]
+    public void AstNode_RecordEquality_ComparesAllProperties()
+    {
+        var a = new AstNode { Kind = "Program", Line = 1 };
+        var b = new AstNode { Kind = "Program", Line = 1 };
+        var c = new AstNode { Kind = "Program", Line = 2 };
+
+        Assert.Equal(a, b);
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+        Assert.NotEqual(a, c);
+    }
+}
+
+public class ParseResultTests
+{
+    [Fact]
+    public void ParseResult_Defaults_HasNoErrorsAndEmptyAst()
+    {
+        var result = new ParseResult();
+
+        Assert.Equal(string.Empty, result.Ast.Kind);
+        Assert.Empty(result.Diagnostics);
+        Assert.False(result.HasErrors);
+    }
+
+    [Fact]
+    public void ParseResult_HasErrors_WhenAnErrorDiagnosticExists()
+    {
+        var result = new ParseResult
+        {
+            Diagnostics = new[]
+            {
+                new ParseDiagnostic(DiagnosticSeverity.Error, "boom", 4, 17)
+            }
+        };
+
+        Assert.True(result.HasErrors);
+    }
+
+    [Fact]
+    public void ParseResult_DoesNotHaveErrors_WhenOnlyWarningsExist()
+    {
+        var result = new ParseResult
+        {
+            Diagnostics = new[]
+            {
+                new ParseDiagnostic(DiagnosticSeverity.Warning, "warn", 4, 17)
+            }
+        };
+
+        Assert.False(result.HasErrors);
+    }
+
+    [Fact]
+    public void ParseDiagnostic_ExposesAllFields()
+    {
+        var diagnostic = new ParseDiagnostic(DiagnosticSeverity.Error, "boom", 4, 17);
+
+        Assert.Equal(DiagnosticSeverity.Error, diagnostic.Severity);
+        Assert.Equal("boom", diagnostic.Message);
+        Assert.Equal(4, diagnostic.Line);
+        Assert.Equal(17, diagnostic.Column);
     }
 }

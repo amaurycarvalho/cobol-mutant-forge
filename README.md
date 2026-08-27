@@ -35,6 +35,8 @@ Pre-built, self-contained executables are published with every release. No .NET 
 
 ### How to Use
 
+Show allowed parameters:
+
 ```
 cobol-mutant-forge --help
 ```
@@ -46,6 +48,34 @@ cobol-mutant-forge --config cobolmutantforge.json
 ```
 
 Use `--quiet` to suppress informational output and show only errors.
+
+#### Command-line parameters
+
+```
+Using:
+  CobolMutantForge.CLI [command] [options]
+
+Options:
+  --quiet         Suppress informational output; only errors are shown.
+  -?, -h, --help  Show help and usage information
+  --version       Mostrar informações de versão
+
+Commands:
+  init      Create a cobolmutantforge.json configuration file.
+  generate  Generate mutants based on the project configuration.
+  export    Package generated mutants for manual CICS import.
+  plugin    Inspect available plugins.
+```
+
+- `--quiet`: suppresses informational messages, printing only errors.
+- `-?, -h, --help`: shows help and usage information for every command.
+- `--version`: prints the tool version.
+- `init [--directory <dir>] [--profile <low|medium|high>]`: creates a `cobolmutantforge.json` in the given directory (default: current directory, `medium` profile).
+- `generate [--config <file>] [--plugin <zunit|testaccelerator>] [--output <dir>]`: generates mutants from the project configuration into the output directory.
+- `export --source <dir> --output <dir> [--format <zip|folder>]`: packages generated mutants into a ZIP (or folder) for manual CICS import.
+- `plugin list`: lists all available plugins with their availability status.
+
+Every command also accepts `--quiet`.
 
 ---
 

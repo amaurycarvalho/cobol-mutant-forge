@@ -7,5 +7,7 @@ public interface IMutationStrategy
 {
     MutationType MutationType { get; }
 
+    OperationType OperationType { get; }
+
     IReadOnlyList<Mutation> Apply(CobolProgram program);
 }

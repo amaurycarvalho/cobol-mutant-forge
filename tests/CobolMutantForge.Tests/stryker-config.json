@@ -1,0 +1,28 @@
+{
+  "stryker-config": {
+    "solution": "CobolMutantForge.sln",
+    "project-info": {
+      "name": "github.com/amaurycarvalho/cobol-mutant-forge",
+      "version": "main"
+    },
+    "mutation-level": "Standard",
+    "mutate": [
+      "src/CobolMutantForge.Domain/**/*.cs",
+      "src/CobolMutantForge.Application/**/*.cs"
+    ],
+    "coverage-analysis": "off",
+    "reporters": [
+      "html",
+      "progress"
+    ],
+    "thresholds": {
+      "high": 80,
+      "low": 60,
+      "break": 0
+    },
+    "test-runner": "mtp",
+    "additional-timeout": 10000,
+    "break-on-initial-test-failure": false,
+    "disable-bail": false
+  }
+}

@@ -10,5 +10,6 @@ public enum MutationType
     SubtractToAdd,
     MultiplyToDivide,
     DivideToMultiply,
-    ConstantReplacement
+    ConstantReplacement,
+    ComplexExpressionMutation
 }

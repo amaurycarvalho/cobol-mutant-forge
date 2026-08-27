@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-27
+
 ### [cli-commands](openspec/changes/cli-commands) Implement the CLI entry point (`Program.cs`) with System.CommandLine.
 
 #### Added
@@ -35,6 +37,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implement `GenerateMutationsUseCase` and `ValidationService` in the Application layer.
 - Enforce the mutation profile matrix when deciding which strategies run.
 
+### [raise-mutation-score](openspec/changes/raise-mutation-score) Raise the Stryker.NET mutation score above 80% by expanding and strengthening the xUnit test suite.
+
+#### Added
+
+- Add new test coverage for the 607 "NoCoverage" mutants, prioritized by module: Domain entities/value objects/aggregates, Application use cases/services/configuration, then Infrastructure parsers/serialization/plugins/exporters/mutators.
+
+#### Changed
+
+- Expand and strengthen the xUnit test suite in `tests/CobolMutantForge.Tests` to kill at least 523 of the 683 surviving mutants, driving the mutation score above 80% (from 118 to 641+ killed).
+- Strengthen existing assertions for the 76 "Survived" mutants (parsers, CLI commands, mutation profile) so existing tests detect the mutations they already execute.
+
 ### [testing-suite](openspec/changes/testing-suite) Add xUnit v3.2.2 unit tests for Domain and Application logic.
 
 #### Added
@@ -54,41 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Produce a `ZUnitImportResult` with programs, test cases, config, copybooks, warnings, and validity.
 - Add a `PluginBase` abstraction and the `TestAcceleratorPlugin` stub (v2.0 placeholder).
 
-## [0.2.0] - 2026-08-27
-
-### [add-metrics-gate](openspec/changes/archive/2026-08-27-add-metrics-gate) Add a `.editorconfig` that enables the built-in code-quality analyzers CA1502 (cyclomatic complexity) and CA1505 (maintainability index) as blocking build violations.
-
-#### Added
-
-- Add a `.editorconfig` that enables the built-in code-quality analyzers CA1502 (cyclomatic complexity) and CA1505 (maintainability index) as blocking build violations.
-- Add a `CodeMetricsConfig.txt` (`CA1502: 10`, `CA1505: 30`) and wire it as `AdditionalFiles` so the rules fire at the intended thresholds.
-- Add a `make duplication` target that runs jscpd with a 10% duplication threshold and fails the build when exceeded.
-
-#### Changed
-
-- Wire the duplication check into the existing quality gate and the `ci.yml` workflow.
-
-### [domain-model](openspec/changes/archive/2026-08-27-domain-model) Define domain entities: `CobolProgram`, `Mutation`, `TestCase`, `MutantPackage`.
-
-#### Added
-
-- Define domain entities: `CobolProgram`, `Mutation`, `TestCase`, `MutantPackage`.
-- Define value objects: `OperationType`, `MutationType`, `MutationProfile`.
-- Define the `MutationProject` aggregate root.
-- Define domain interfaces: `ICobolParser`, `IMutationStrategy`, `IMutationEngine`, `IImportPlugin`, `IExportPlugin`.
-- Model the mutation profile matrix (low/medium/high) from the PRD.
-
-### [type-cobol-parser](openspec/changes/archive/2026-08-27-type-cobol-parser) Add the TypeCobol dependency to the Infrastructure project.
-
-#### Added
-
-- Add the TypeCobol dependency to the Infrastructure project.
-- Implement `TypeCobolParserAdapter` conforming to `ICobolParser`.
-- Map TypeCobol's parse tree onto the domain's minimal `AstNode` representation.
-- Surface parser diagnostics (errors/warnings) to callers.
-- Provide a fallback-friendly error path for unsupported constructs.
-
-[Unreleased]: https://github.com/amaurycarvalho/cobol-mutant-forge/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/amaurycarvalho/cobol-mutant-forge/releases/tag/v0.2.0
+[Unreleased]: https://github.com/amaurycarvalho/cobol-mutant-forge/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/amaurycarvalho/cobol-mutant-forge/releases/tag/v0.3.0
 
 See [CHANGELOG Archive](CHANGELOG-ARCHIVE.md) for older releases.

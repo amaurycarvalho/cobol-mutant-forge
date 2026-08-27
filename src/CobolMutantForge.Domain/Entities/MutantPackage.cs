@@ -1,5 +1,7 @@
 using CobolMutantForge.Domain.Entities;
 
+using CobolMutantForge.Domain.ValueObjects;
+
 namespace CobolMutantForge.Domain.Entities;
 
 public sealed class MutantPackage
@@ -11,6 +13,7 @@ public sealed class MutantPackage
     public string? Manifest { get; set; }
     public string? Report { get; set; }
     public CobolProgram? SourceProgram { get; }
+    public MutationProfile Profile { get; init; } = MutationProfile.Medium;
     public int Count => _mutants.Count;
 
     public MutantPackage(string id, CobolProgram? sourceProgram = null)
