@@ -1,4 +1,4 @@
-# cobol-mutant-forge
+# CobolMutantForge
 
 A Mutation Testing Tool for COBOL/CICS Programs.
 
@@ -6,32 +6,56 @@ A Mutation Testing Tool for COBOL/CICS Programs.
 
 ---
 
-## 🧑‍💻 For Users
+## For Users
 
 ### Features
 
-Available as open-source software (OSS) and designed as a command-line interface (CLI) tool, it offers seamless execution from the terminal and easy integration with any development environment, giving developers full control over their mutation testing projects for COBOL/CICS.
+CobolMutantForge is an open-source, freeware command-line tool for mutation testing of COBOL/CICS programs. It runs from the terminal and integrates with any development environment, giving developers full control over their mutation testing projects.
 
-> This is an MVP prototype, and the project's current status is "in development";
+> This is an MVP prototype and the project is currently "in development".
 > Feel free to use and adapt.
 
 ### Requirements
 
+- .NET SDK 8.0 (only needed to build from source or run via `dotnet run`)
+- Linux, macOS, or Windows
+
 ### How to Install
+
+Pre-built, self-contained executables are published with every release. No .NET SDK is required to run them.
+
+1. Go to the [Releases](https://github.com/amaurycarvalho/cobol-mutant-forge/releases) page.
+2. Download the archive for your platform:
+   - `cobol-mutant-forge-<version>-win-x64.zip` for Windows (x64)
+   - `cobol-mutant-forge-<version>-linux-x64.tar.gz` for Linux (x64)
+   - `cobol-mutant-forge-<version>-osx-x64.tar.gz` for macOS (Intel)
+   - `cobol-mutant-forge-<version>-osx-arm64.tar.gz` for macOS (Apple Silicon)
+3. Extract the archive and run the `cobol-mutant-forge` executable.
 
 ### How to Use
 
+```
+cobol-mutant-forge --help
+```
+
+Run mutation testing against a COBOL source tree with a configuration file:
+
+```
+cobol-mutant-forge --config cobolmutantforge.json
+```
+
+Use `--quiet` to suppress informational output and show only errors.
+
 ---
 
-## 👨‍🔧 For Developers
+## For Developers
 
 ### Specifications
 
 This project uses [Spec-Driven Development (SDD)](https://opencode.ai). All specifications live under [`openspec/specs/`](openspec/specs/):
 
-Active changes are tracked under [`openspec/changes/`](openspec/changes/).
-
-Archived changes are tracked under [`openspec/changes/archive/`](openspec/changes/archive/).
+- Active changes are tracked under [`openspec/changes/`](openspec/changes/).
+- Archived changes are tracked under [`openspec/changes/archive/`](openspec/changes/archive/).
 
 ### How to Get the Source Code
 
@@ -41,134 +65,54 @@ git clone https://github.com/amaurycarvalho/cobol-mutant-forge.git
 
 ### How to Install and Build
 
+Requirements:
+
+- .NET SDK 8.0
+- Make
+
 ```bash
 make install
 make build
 ```
 
-Requirements:
-
-- .NET SDK 8.0
-- VSCode
-- OpenSpec
-- Stryker.Net
-
-#### Linting and Unit Testing
+### Linting and Unit Testing
 
 ```bash
 make lint test
 ```
 
-#### Quality Gate
+### Quality Gate
 
-The quality gate executes linting, tests (with coverage), coverage verification,
-metrics, and security checks:
+The quality gate runs linting and the unit tests:
 
 ```bash
 make quality-gate
 ```
 
-Individual checks:
+### Mutation Testing
 
-```bash
-make lint               # formatting/analysis (dotnet format --verify-no-changes)
-make test               # tests + coverage
-make coverage-check     # coverage against COVERAGE_THRESHOLD (default 80)
-make metrics            # lines of code (LOC) per service
-make security           # vulnerable/deprecated/outdated packages + Semgrep SAST
-```
-
-Static analysis, complexity, code smells, technical debt, and maintainability
-ratings are managed by **SonarCloud** within the CI pipeline, featuring
-per-service analysis, a _Leak Period_ for new code, and Pull Request decoration.
-Coverage data is reported via `TestResults/**/coverage.cobertura.xml`.
-
-> **CI Jobs:** the `sonarcloud` job (SonarCloud) and the `integration-test`
-> job run **only on pull requests**.
-> The `quality-gate` job (lint + test + coverage + metrics + security)
-> runs on pushes to `main` and on pull requests.
-
-#### SonarCloud analysis in the CI pipeline
-
-SonarCloud requires the following secrets to be configured in GitHub:
-
-```
-SONAR_PROJECT_KEY
-SONAR_ORG
-SONAR_TOKEN
-```
-
-#### Local SonarQube analysis (self-hosted)
-
-To analyze services locally against a running **self-hosted SonarQube**
-server (e.g., `http://localhost:9000`), install the scanner and
-run the analysis for each service:
-
-```bash
-make sonar-install
-SONAR_TOKEN=<your-token> make sonar-check
-```
-
-The `sonar-check` command executes the sequence `begin → build + test (with coverage) → end`.
-
-##### Spinning up a local SonarQube server (Docker Compose)
-
-The repository includes a reproducible local stack (SonarQube Community +
-PostgreSQL, with persistent volumes) located at `sonarqube/docker-compose.yml`.
-It is based on the official SonarSource reference and incorporates the same
-hardening measures (`read_only`, `tmpfs`, named volumes). Full workflow:
-
-```bash
-make sonar-up        # starts the stack and waits for SonarQube to be ready
-# 1) Access http://localhost:9000 and log in with admin / admin
-# 2) Change the password on first login (mandatory)
-# 3) My Account -> Security -> Tokens -> Generate (admin user token)
-SONAR_TOKEN=<your-token> make sonar-check   # analyzes the 4 services
-make sonar-down      # stops the stack while preserving volumes
-```
-
-With an **admin** user token, the four per-service projects (the keys
-displayed by `make sonar-up`, one per service) are **automatically created**
-during the first analysis.
-
-**Host requirements:**
-
-- **Linux:** the embedded Elasticsearch requires a higher `vm.max_map_count`; apply
-  `sudo sysctl -w vm.max_map_count=262144` (make it persistent in `/etc/sysctl.conf`).
-- **Docker Desktop (Windows/Mac):** allocate at least 2–4 GB of memory to the
-  engine (the compose file sets `SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true` to avoid
-  `max_map_count` failures, as this setting isn't directly configurable on these hosts).
-- **Full reset** (deletes stack data): `docker compose -f sonarqube/docker-compose.yml down -v`.
-- The `admin`/`admin` credentials are for local development only — do not use
-  them in production.
-
-Environment variables:
-
-- `SONAR_HOST_URL` — SonarQube server URL (default `http://localhost:9000`);
-- `SONAR_TOKEN` — authentication token (mandatory);
-- `SONAR_PROJECT_KEY` — project key.
-
-> The local scanner state (`/.sonarqube`) is ignored by git. The local analysis
-> uses the same Cobertura coverage reports (`TestResults/**/coverage.cobertura.xml`)
-> as `make test`, excluding test sources.
-
-### Mutation testing
-
-Make sure everything is installed.
+Mutation testing (Stryker.NET) is manual and can be time-consuming. Install the tool once, then run it:
 
 ```bash
 make install-quality-tools
-```
-
-Run it locally (it can be time-consuming and require significant processing).
-
-```bash
 make mutation
 ```
 
-Then, get `services/**/tests/**/StrykerOutput/**/reports/mutation-report.json` and `services/**/tests/**/StrykerOutput/**/reports/mutation-report.html` files and use it with your AI agent to fix your unit tests.
+The mutation report is written to `StrykerOutput/**/reports/mutation-report.html`.
 
-Finally, run the mutation testing again and check if it pass the quality gate.
+### Publishing Binaries
+
+Produce self-contained, single-file executables for all supported platforms:
+
+```bash
+make publish
+```
+
+Or for a single runtime identifier:
+
+```bash
+make publish-linux-x64
+```
 
 ---
 

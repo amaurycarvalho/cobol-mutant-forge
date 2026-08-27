@@ -9,7 +9,7 @@ metadata:
 
 Push the current release to the remote repository: create a git tag, push tags, create a release branch, push it, and switch back to `main`.
 
-The version is read automatically from `VERSION` in the `Makefile` (the single source of truth for image and release version, e.g. `VERSION ?= 1.0.0`).
+The version is read automatically from `VERSION` in the `Makefile` (the single source of truth for the release version, e.g. `VERSION ?= 0.1.0`).
 
 **Steps**
 

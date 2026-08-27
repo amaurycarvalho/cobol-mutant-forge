@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7EE80B25-4B0F-4F0C-B894-BA50577F55CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CobolMutantForge.Domain", "src\CobolMutantForge.Domain\CobolMutantForge.Domain.csproj", "{23963AEC-1168-4B5C-8865-068BCB5B50F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CobolMutantForge.Application", "src\CobolMutantForge.Application\CobolMutantForge.Application.csproj", "{0348A403-93B9-4169-AD39-19371CDA68A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CobolMutantForge.Infrastructure", "src\CobolMutantForge.Infrastructure\CobolMutantForge.Infrastructure.csproj", "{741A46F3-A9DC-4F9D-B0D5-948B20E6FF5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CobolMutantForge.CLI", "src\CobolMutantForge.CLI\CobolMutantForge.CLI.csproj", "{C3F8385F-1809-418E-9CC2-AF8AFEC3B2CF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0F72D8CC-8801-4F4B-967C-AC4DF9F62505}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CobolMutantForge.Tests", "tests\CobolMutantForge.Tests\CobolMutantForge.Tests.csproj", "{8EEEDBA2-A3C8-4E1B-8385-FC1CC6CD626D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{23963AEC-1168-4B5C-8865-068BCB5B50F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23963AEC-1168-4B5C-8865-068BCB5B50F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23963AEC-1168-4B5C-8865-068BCB5B50F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23963AEC-1168-4B5C-8865-068BCB5B50F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0348A403-93B9-4169-AD39-19371CDA68A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0348A403-93B9-4169-AD39-19371CDA68A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0348A403-93B9-4169-AD39-19371CDA68A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0348A403-93B9-4169-AD39-19371CDA68A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{741A46F3-A9DC-4F9D-B0D5-948B20E6FF5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{741A46F3-A9DC-4F9D-B0D5-948B20E6FF5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{741A46F3-A9DC-4F9D-B0D5-948B20E6FF5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{741A46F3-A9DC-4F9D-B0D5-948B20E6FF5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3F8385F-1809-418E-9CC2-AF8AFEC3B2CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3F8385F-1809-418E-9CC2-AF8AFEC3B2CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3F8385F-1809-418E-9CC2-AF8AFEC3B2CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3F8385F-1809-418E-9CC2-AF8AFEC3B2CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EEEDBA2-A3C8-4E1B-8385-FC1CC6CD626D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EEEDBA2-A3C8-4E1B-8385-FC1CC6CD626D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EEEDBA2-A3C8-4E1B-8385-FC1CC6CD626D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EEEDBA2-A3C8-4E1B-8385-FC1CC6CD626D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{23963AEC-1168-4B5C-8865-068BCB5B50F8} = {7EE80B25-4B0F-4F0C-B894-BA50577F55CB}
+		{0348A403-93B9-4169-AD39-19371CDA68A2} = {7EE80B25-4B0F-4F0C-B894-BA50577F55CB}
+		{741A46F3-A9DC-4F9D-B0D5-948B20E6FF5F} = {7EE80B25-4B0F-4F0C-B894-BA50577F55CB}
+		{C3F8385F-1809-418E-9CC2-AF8AFEC3B2CF} = {7EE80B25-4B0F-4F0C-B894-BA50577F55CB}
+		{8EEEDBA2-A3C8-4E1B-8385-FC1CC6CD626D} = {0F72D8CC-8801-4F4B-967C-AC4DF9F62505}
+	EndGlobalSection
+EndGlobal

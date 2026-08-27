@@ -8,7 +8,7 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,35 +19,33 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
-      - name: Resolve version from tag
-        id: version
-        run: |
-          VER="${GITHUB_REF_NAME#v}"
-          echo "version=${VER}" >> "$GITHUB_OUTPUT"
-
-      - name: Build solutions
+      - name: Build
         run: make build
 
-      - name: Build service images
-        run: make build-images VERSION=${{ steps.version.outputs.version }}
+      - name: Publish self-contained binaries
+        run: make publish
 
-      - name: Package image tarballs
+      - name: Package release archives
         run: |
-          mkdir -p images
-          V=${{ steps.version.outputs.version }}
-          for img in agent-service mcp-service rag-service; do
-            echo "Exporting $img:$V ..."
-            docker save "$img:$V" | gzip > "images/$img.tar.gz"
+          VERSION="${{ github.ref_name }}"
+          mkdir -p "$RELEASE_DIR/archives"
+          for rid in win-x64 linux-x64 osx-x64 osx-arm64; do
+            if [ "$rid" = "win-x64" ]; then
+              (cd "$RELEASE_DIR" && zip -r "archives/cobol-mutant-forge-$VERSION-$rid.zip" "$rid")
+            else
+              tar -czf "$RELEASE_DIR/archives/cobol-mutant-forge-$VERSION-$rid.tar.gz" -C "$RELEASE_DIR" "$rid"
+            fi
           done
+        env:
+          RELEASE_DIR: artifacts/release
 
-      - name: Create GitHub release with image assets
+      - name: Create GitHub release with archives
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: "agentic-fp-ai-mvp v${{ steps.version.outputs.version }}"
+          name: "CobolMutantForge ${{ github.ref_name }}"
           files: |
-            images/*.tar.gz
-            docker-compose.release.yml
+            artifacts/release/archives/*
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -7,6 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/amaurycarvalho/cobol-mutant-forge/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/amaurycarvalho/cobol-mutant-forge/compare/v0.1.0...HEAD
 
 See [CHANGELOG Archive](CHANGELOG-ARCHIVE.md) for older releases.

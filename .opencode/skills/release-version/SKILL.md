@@ -28,7 +28,7 @@ Update the application release version across the codebase and regenerate all ch
 
 2. **Update VERSION in the Makefile**
 
-   Read `Makefile` and find the line containing `VERSION ?=` (the single source of truth for image and release version).
+   Read `Makefile` and find the line containing `VERSION ?=` (the single source of truth for the release version).
 
    Replace the current value with the new version string:
 
@@ -65,4 +65,4 @@ Example: /release-version 1.0.1
 - Always validate that a version string was provided before making any changes
 - Do NOT guess or auto-generate a version — the user must supply it explicitly
 - The version format should follow `X.Y.Z` (e.g., `1.0.1`)
-- Only update the `VERSION` line in the `Makefile` — service images and the GitHub release version are derived from it at build/release time
+- Only update the `VERSION` line in the `Makefile` — the GitHub release version is derived from it at build/release time
