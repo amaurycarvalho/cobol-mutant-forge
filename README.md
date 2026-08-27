@@ -10,14 +10,16 @@ A Mutation Testing Tool for COBOL/CICS Programs.
 
 ### Features
 
-### Requirements
+Available as open-source software (OSS) and designed as a command-line interface (CLI) tool, it offers seamless execution from the terminal and easy integration with any development environment, giving developers full control over their mutation testing projects for COBOL/CICS.
 
+> This is an MVP prototype, and the project's current status is "in development";
+> Feel free to use and adapt.
+
+### Requirements
 
 ### How to Install
 
-
 ### How to Use
-
 
 ---
 
@@ -78,7 +80,7 @@ make security           # vulnerable/deprecated/outdated packages + Semgrep SAST
 
 Static analysis, complexity, code smells, technical debt, and maintainability
 ratings are managed by **SonarCloud** within the CI pipeline, featuring
-per-service analysis, a *Leak Period* for new code, and Pull Request decoration.
+per-service analysis, a _Leak Period_ for new code, and Pull Request decoration.
 Coverage data is reported via `TestResults/**/coverage.cobertura.xml`.
 
 > **CI Jobs:** the `sonarcloud` job (SonarCloud) and the `integration-test`
@@ -132,13 +134,13 @@ during the first analysis.
 **Host requirements:**
 
 - **Linux:** the embedded Elasticsearch requires a higher `vm.max_map_count`; apply
-`sudo sysctl -w vm.max_map_count=262144` (make it persistent in `/etc/sysctl.conf`).
+  `sudo sysctl -w vm.max_map_count=262144` (make it persistent in `/etc/sysctl.conf`).
 - **Docker Desktop (Windows/Mac):** allocate at least 2–4 GB of memory to the
-engine (the compose file sets `SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true` to avoid
-`max_map_count` failures, as this setting isn't directly configurable on these hosts).
+  engine (the compose file sets `SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true` to avoid
+  `max_map_count` failures, as this setting isn't directly configurable on these hosts).
 - **Full reset** (deletes stack data): `docker compose -f sonarqube/docker-compose.yml down -v`.
 - The `admin`/`admin` credentials are for local development only — do not use
-them in production.
+  them in production.
 
 Environment variables:
 
@@ -174,4 +176,3 @@ Finally, run the mutation testing again and check if it pass the quality gate.
 
 - [Project repository](https://github.com/amaurycarvalho/cobol-mutant-forge)
 - [Releases](https://github.com/amaurycarvalho/cobol-mutant-forge/releases)
-
