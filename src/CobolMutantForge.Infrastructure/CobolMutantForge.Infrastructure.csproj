@@ -10,4 +10,15 @@
     <ProjectReference Include="..\CobolMutantForge.Application\CobolMutantForge.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- TypeCobol (PRD-mandated COBOL parser) is not yet available as a NuGet
+         package. The TypeCobol compiler core is distributed only as source at
+         TypeCobolTeam/TypeCobol (latest release v2.14.0 ships no assets).
+         The TypeCobolParserAdapter currently runs a self-contained fallback
+         parser. When a consumable package exists, uncomment and pin it, then
+         rewire the adapter to map TypeCobol's tree onto the domain AstNode.
+    <PackageReference Include="TypeCobol.Compiler" Version="..." />
+    -->
+  </ItemGroup>
+
 </Project>

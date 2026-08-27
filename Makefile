@@ -7,7 +7,7 @@
 # ---------- Variables ----------
 
 # Single source of truth for the release version.
-VERSION ?= 0.1.0
+VERSION ?= 0.2.0
 
 # Build configuration.
 CONFIG ?= Release
