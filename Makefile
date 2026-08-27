@@ -7,7 +7,7 @@
 # ---------- Variables ----------
 
 # Single source of truth for the release version.
-VERSION ?= 0.3.0
+VERSION ?= 0.4.0
 
 # Coverage floor (constitution requires >=90% for low-criticality code and
 # >=100% for medium/high criticality). Overall measured: ~98% with real tests
