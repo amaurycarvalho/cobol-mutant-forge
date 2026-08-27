@@ -116,6 +116,28 @@ public sealed class TypeCobolParserAdapter : ICobolParser
                 continue;
             }
 
+            if (c == '-')
+            {
+                bool isHyphenInWord = i > 0 && i < line.Length - 1 &&
+                    char.IsLetterOrDigit(line[i - 1]) && char.IsLetterOrDigit(line[i + 1]);
+                if (!isHyphenInWord)
+                {
+                    if (wordStart >= 0)
+                    {
+                        EmitWord(line, wordStart, i, lineNumber, nodes);
+                        wordStart = -1;
+                    }
+                    nodes.Add(new AstNode
+                    {
+                        Kind = "ArithmeticOperator",
+                        Line = lineNumber,
+                        Column = i + 1,
+                        Text = "-"
+                    });
+                    continue;
+                }
+            }
+
             if (char.IsLetterOrDigit(c) || c == '-')
             {
                 if (wordStart < 0)
@@ -139,16 +161,6 @@ public sealed class TypeCobolParserAdapter : ICobolParser
                     Line = lineNumber,
                     Column = i + 1,
                     Text = c.ToString()
-                });
-            }
-            else if (c == '-' && IsStandaloneMinus(line, i))
-            {
-                nodes.Add(new AstNode
-                {
-                    Kind = "ArithmeticOperator",
-                    Line = lineNumber,
-                    Column = i + 1,
-                    Text = "-"
                 });
             }
         }
@@ -182,13 +194,6 @@ public sealed class TypeCobolParserAdapter : ICobolParser
                 Text = upper
             });
         }
-    }
-
-    private static bool IsStandaloneMinus(string line, int index)
-    {
-        bool hasLeftSpace = index == 0 || char.IsWhiteSpace(line[index - 1]);
-        bool hasRightSpace = index == line.Length - 1 || char.IsWhiteSpace(line[index + 1]);
-        return hasLeftSpace && hasRightSpace;
     }
 
     private static void WarnOnUnsupportedConstruct(string line, int lineNumber, List<ParseDiagnostic> diagnostics)

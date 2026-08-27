@@ -137,4 +137,50 @@ public class TypeCobolParserAdapterTests
         Assert.False(result.HasErrors);
         Assert.Contains(result.Diagnostics, d => d.Severity == DiagnosticSeverity.Warning);
     }
+
+    [Fact]
+    public void Parse_StandaloneMinus_DiscoversMinusNode()
+    {
+        var parser = new TypeCobolParserAdapter();
+        const string source =
+            "       IDENTIFICATION DIVISION.\r\n" +
+            "       PROGRAM-ID. SAMPLE.\r\n" +
+            "       PROCEDURE DIVISION.\r\n" +
+            "           COMPUTE A = B - C\r\n" +
+            "       END-PROGRAM SAMPLE.\r\n";
+
+        var result = parser.Parse(source);
+
+        Assert.False(result.HasErrors);
+        Assert.Contains(AllNodes(result.Ast),
+            n => n.Kind == "ArithmeticOperator" && n.Text == "-");
+    }
+
+    [Fact]
+    public void Parse_HyphenatedIdentifier_DoesNotProduceMinusNode()
+    {
+        var parser = new TypeCobolParserAdapter();
+        const string source =
+            "       IDENTIFICATION DIVISION.\r\n" +
+            "       PROGRAM-ID. SAMPLE.\r\n" +
+            "       PROCEDURE DIVISION.\r\n" +
+            "           MOVE CUSTOMER-ACTIVE TO FLAG\r\n" +
+            "       END-PROGRAM SAMPLE.\r\n";
+
+        var result = parser.Parse(source);
+
+        Assert.DoesNotContain(AllNodes(result.Ast),
+            n => n.Kind == "ArithmeticOperator" && n.Text == "-");
+    }
+
+    [Fact]
+    public void Parse_EmptySource_ProducesProgramNodeWithoutErrors()
+    {
+        var parser = new TypeCobolParserAdapter();
+
+        var result = parser.Parse("");
+
+        Assert.Equal("Program", result.Ast.Kind);
+        Assert.False(result.HasErrors);
+    }
 }

@@ -24,11 +24,17 @@ jobs:
       - name: Install dependencies
         run: make install
 
-      - name: Lint
-        run: make lint
+      - name: Install Semgrep (SAST)
+        run: |
+          python3 -m pip install --user semgrep
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
-      - name: Build
-        run: make build
+      - name: Run quality gate (lint + test + coverage + metrics + security)
+        run: make quality-gate
 
-      - name: Test
-        run: make test
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/
+          if-no-files-found: warn

@@ -1,5 +1,7 @@
 using CobolMutantForge.Domain.Aggregates;
+using CobolMutantForge.Domain.Ast;
 using CobolMutantForge.Domain.Entities;
+using CobolMutantForge.Domain.Interfaces;
 using CobolMutantForge.Domain.ValueObjects;
 using Xunit;
 
@@ -165,5 +167,106 @@ public class MutationProjectTests
         Assert.Equal(MutationProfile.Medium, project.Profile);
         Assert.Single(project.Programs);
         Assert.Single(project.TestCases);
+    }
+}
+
+public class ImportResultTests
+{
+    [Fact]
+    public void Defaults_AreEmptyAndValid()
+    {
+        var result = new ImportResult();
+
+        Assert.Empty(result.Programs);
+        Assert.Empty(result.TestCases);
+        Assert.Empty(result.Warnings);
+        Assert.True(result.IsValid);
+    }
+
+    [Fact]
+    public void PopulatedValues_AreExposed()
+    {
+        var result = new ImportResult
+        {
+            Programs = new[] { new CobolProgram("HELLO", "PROGRAM-ID. HELLO.") },
+            TestCases = new[] { new TestCase("tc-1") },
+            Warnings = new[] { "warn" },
+            IsValid = false
+        };
+
+        Assert.Single(result.Programs);
+        Assert.Single(result.TestCases);
+        Assert.Equal("warn", result.Warnings[0]);
+        Assert.False(result.IsValid);
+    }
+}
+
+public class TestCaseDataTests
+{
+    [Fact]
+    public void TestCase_ExposesInputsAndExpectedOutputs()
+    {
+        var testCase = new TestCase(
+            "tc-1",
+            new Dictionary<string, string> { ["A"] = "1" },
+            new Dictionary<string, string> { ["B"] = "2" });
+
+        Assert.Equal("1", testCase.Inputs["A"]);
+        Assert.Equal("2", testCase.ExpectedOutputs["B"]);
+    }
+}
+
+public class MutantPackageDetailsTests
+{
+    [Fact]
+    public void MutantPackage_ExposesManifestReportAndSourceProgram()
+    {
+        var program = new CobolProgram("HELLO", "PROGRAM-ID. HELLO.");
+        var package = new MutantPackage("pkg-1", program)
+        {
+            Manifest = "{}",
+            Report = "{}"
+        };
+
+        Assert.Equal("{}", package.Manifest);
+        Assert.Equal("{}", package.Report);
+        Assert.Same(program, package.SourceProgram);
+    }
+
+    [Fact]
+    public void MutantPackage_ThrowsOnBlankId()
+    {
+        Assert.Throws<ArgumentException>(() => new MutantPackage(" "));
+    }
+}
+
+public class MutationDetailsTests
+{
+    [Fact]
+    public void Mutation_ExposesCoveringTestIds()
+    {
+        var mutation = new Mutation("m1", MutationType.AndToOr, 1, "a", "b", new[] { "tc-1", "tc-2" });
+
+        Assert.Contains("tc-1", mutation.CoveringTestIds);
+        Assert.Equal(2, mutation.CoveringTestIds.Count);
+    }
+
+    [Fact]
+    public void Mutation_ThrowsOnBlankId()
+    {
+        Assert.Throws<ArgumentException>(() => new Mutation("", MutationType.AndToOr, 1, "a", "b"));
+    }
+}
+
+public class CobolProgramDetailsTests
+{
+    [Fact]
+    public void CobolProgram_ExposesCopybooksAndAst()
+    {
+        var ast = new AstNode { Kind = "Program" };
+        var program = new CobolProgram("HELLO", "PROGRAM-ID. HELLO.", new[] { "CPY1", "CPY2" }, ast);
+
+        Assert.Equal(2, program.Copybooks.Count);
+        Assert.Same(ast, program.Ast);
     }
 }

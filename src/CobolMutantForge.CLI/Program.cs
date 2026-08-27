@@ -1,8 +1,10 @@
 using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace CobolMutantForge.CLI;
 
+[ExcludeFromCodeCoverage]
 internal static class Program
 {
     private static async Task<int> Main(string[] args)
