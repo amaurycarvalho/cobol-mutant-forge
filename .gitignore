@@ -36,9 +36,6 @@ ScaffoldingReadMe.txt
 # NuGet Symbol Packages
 *.snupkg
 
-# dotenv environment variables file
-.env
-
 # Others
 ~$*
 *~
@@ -55,3 +52,15 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+# CocoIndex Code (ccc)
+/.cocoindex_code/
+
+# Release image tarballs
+/images/
+
+# SonarQube local scanner state
+/.sonarqube/
+
+# Stryker.NET mutation reports
+StrykerOutput/
+
