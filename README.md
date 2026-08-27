@@ -1,6 +1,6 @@
 # CobolMutantForge
 
-A Mutation Testing Tool for COBOL/CICS Programs.
+A Mutation Testing Tool for COBOL/CICS (z/OS) Programs.
 
 [![Spec-Driven Development](https://img.shields.io/badge/SDD-OpenSpec-yellow)](openspec/specs/project-constitution/spec.md)
 
@@ -10,7 +10,7 @@ A Mutation Testing Tool for COBOL/CICS Programs.
 
 ### Features
 
-CobolMutantForge is an open-source, freeware command-line tool for mutation testing of COBOL/CICS programs. It runs from the terminal and integrates with any development environment, giving developers full control over their mutation testing projects.
+CobolMutantForge is an open-source, freeware command-line tool for mutation testing of COBOL/CICS (z/OS) programs. It runs from the terminal and integrates with any development environment, giving developers full control over their mutation testing projects.
 
 > This is an MVP experimental prototype in a very early stage.
 > The project is currently "in development".
