@@ -24,12 +24,15 @@ jobs:
       - name: Install dependencies
         run: make install
 
+      - name: Install jscpd (duplication check)
+        run: npm install -g jscpd@5.0.16
+
       - name: Install Semgrep (SAST)
         run: |
           python3 -m pip install --user semgrep
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
-      - name: Run quality gate (lint + test + coverage + metrics + security)
+      - name: Run quality gate (lint + test + coverage + metrics + duplication + security)
         run: make quality-gate
 
       - name: Upload test results

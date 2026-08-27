@@ -1,0 +1,10 @@
+<Project>
+
+  <ItemGroup>
+    <!-- Thresholds for the built-in code-metrics analyzers (design.md D2).
+         CA1502: max cyclomatic complexity 10; CA1505: min maintainability index 30.
+         Wired via $(MSBuildThisFileDirectory) so all projects share one file. -->
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)CodeMetricsConfig.txt" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,21 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{cs,vb}]
+indent_style = space
+indent_size = 4
+
+[*.cs]
+# Enforce cyclomatic complexity <= 10 (design.md D3, spec code-metrics-gate)
+dotnet_diagnostic.CA1502.severity = error
+# Enforce maintainability index >= 30 (design.md D3, spec code-metrics-gate)
+dotnet_diagnostic.CA1505.severity = error
+
+# The analyzer rules above apply to all projects, including tests. Test code may
+# legitimately contain longer/complex fixtures; scope them out here if they trip
+# the gate (design.md Risks). By default they stay enabled everywhere.

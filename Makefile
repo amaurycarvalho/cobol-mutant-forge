@@ -1,7 +1,7 @@
 # Makefile
 # Build/test/release tooling for the CobolMutantForge CLI.
 
-.PHONY: install build test lint clean publish metrics coverage coverage-check security mutation install-quality-tools quality-gate help
+.PHONY: install build test lint clean publish metrics coverage coverage-check security mutation install-quality-tools quality-gate duplication help
 .PHONY: $(addprefix publish-,$(RIDS))
 
 # ---------- Variables ----------
@@ -119,6 +119,18 @@ security:
 	fi
 	@echo "$(GREEN)Security scan complete$(NC)"
 
+duplication:
+	@echo "$(GREEN)Duplication check (jscpd, threshold 10%)...$(NC)"
+	@if command -v jscpd >/dev/null 2>&1; then \
+		jscpd src --format csharp --threshold 10 \
+			--ignore "**/obj/**,**/bin/**" \
+			--reporters console,json || exit 1; \
+	else \
+		echo "$(RED)jscpd not found. Install it first (e.g. 'npm install -g jscpd').$(NC)"; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)Duplication check passed (<= 10%)$(NC)"
+
 mutation:
 	@echo "$(GREEN)Running mutation tests (Stryker.NET, manual)...$(NC)"
 	@dotnet-stryker --solution "$(SOLUTION)" --test-runner mtp || exit 1
@@ -129,13 +141,14 @@ install-quality-tools:
 	@dotnet tool install --global dotnet-stryker || true
 	@echo "$(GREEN)Quality tools installed$(NC)"
 
-# Lean quality gate: lint + test. Mutation stays manual via `make mutation`.
+# Lean quality gate: lint + test + coverage + metrics + duplication. Mutation stays manual via `make mutation`.
 quality-gate:
 	@echo "$(GREEN)Running quality gate...$(NC)"
 	@$(MAKE) lint
 	@$(MAKE) test
 	@$(MAKE) coverage-check
 	@$(MAKE) metrics
+	@$(MAKE) duplication
 	@$(MAKE) security
 	@echo "$(GREEN)All quality checks passed!$(NC)"
 
@@ -152,10 +165,11 @@ help:
 	@echo "  make coverage         - Run tests and check coverage threshold"
 	@echo "  make coverage-check   - Check coverage against COVERAGE_THRESHOLD (default 90)"
 	@echo "  make security         - Check package vulnerabilities/deprecated/outdated + Semgrep SAST"
+	@echo "  make duplication      - Check code duplication (jscpd, threshold 10%)"
 	@echo "  make clean      - Clean build artifacts and publish outputs"
 	@echo "  make publish    - Publish self-contained single-file binaries for all RIDs"
 	@echo "  make publish-<rid> - Publish a single RID (one of: $(RIDS))"
 	@echo "  make mutation   - Run Stryker.NET mutation tests (manual, not in CI)"
 	@echo "  make install-quality-tools - Install dotnet-stryker"
-	@echo "  make quality-gate - Run the quality gate (lint + test + coverage + metrics + security)"
+	@echo "  make quality-gate - Run the quality gate (lint + test + coverage + metrics + duplication + security)"
 	@echo "  make help       - Show this help message"

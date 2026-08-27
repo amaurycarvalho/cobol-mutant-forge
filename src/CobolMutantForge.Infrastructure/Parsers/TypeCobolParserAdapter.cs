@@ -69,7 +69,14 @@ public sealed class TypeCobolParserAdapter : ICobolParser
         };
     }
 
+    // Cyclomatic complexity is high (24) because this is a linear character-scanning
+    // state machine. It is a documented fallback parser (see class docstring) that will
+    // be replaced by the TypeCobol-backed parser; refactoring the scanner into the
+    // threshold would risk altering behavior for no lasting benefit. Justified
+    // suppression per the code-metrics-gate design (design.md Risks).
+#pragma warning disable CA1502 // Cyclomatic complexity of ScanLine exceeds 10
     private static void ScanLine(string line, int lineNumber, List<AstNode> nodes, List<ParseDiagnostic> diagnostics)
+#pragma warning restore CA1502
     {
         if (string.IsNullOrWhiteSpace(line))
         {

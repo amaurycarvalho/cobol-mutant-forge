@@ -58,3 +58,6 @@ nunit-*.xml
 # Stryker.NET mutation reports
 StrykerOutput/
 
+# jscpd duplication reports
+report/
+
